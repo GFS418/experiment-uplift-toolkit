@@ -1,7 +1,7 @@
 # Pre-registered analysis plan: Hillstrom e-mail experiment
 
-**Status: DRAFT, 2026-10-05.** The plan becomes binding when it is committed and
-pushed. The memo cites that commit's hash. No outcome column (`visit`,
+**Status: binding as of commit `b120b77` (2026-10-05).** The memo cites that
+hash; every later edit is listed in the deviations log (section 12). No outcome column (`visit`,
 `conversion`, `spend`) is loaded before then: the loader in `exptools.data`
 excludes outcomes unless called with `load_outcomes=True`, and nothing in the
 repository makes that call before this commit.
@@ -88,7 +88,7 @@ Correction: **Dunnett's many-to-one procedure**, single-step, giving adjusted
 p-values and simultaneous 95% confidence intervals. Dunnett accounts for the
 positive correlation between H1 and H2 created by their shared control arm.
 
-**[TO CONFIRM] Implementation.** Primary: a studentized bootstrap max-T version
+**Implementation.** Primary: a studentized bootstrap max-T version
 of Dunnett. Resample customers within each arm (B = 10,000), compute
 T*_j = (d*_j - d_j) / se*_j for both comparisons, and use the 95th percentile of
 max_j |T*_j| as the simultaneous critical value. The adjusted p-value for H_j is
@@ -114,7 +114,7 @@ size, equivalent to the two-proportion z-test). Every exploratory result is
 labeled as such in tables, figures, and the memo, and is treated as a lead for
 a future test, not a finding.
 
-**[TO CONFIRM] Men's vs women's on spend is exploratory.** Dunnett covers
+**Men's vs women's on spend is exploratory.** Dunnett covers
 comparisons with the control only, so the head-to-head comparison of the two
 e-mails moves to this family. The question of which e-mail to send to whom is
 answered properly in section 9 on held-out data.
@@ -141,7 +141,7 @@ answered properly in section 9 on held-out data.
     the simulation for compute; that will be stated.
 - **Under-coverage is reported, whatever it shows.** "Under-coverage" means the
   Monte Carlo 95% interval for coverage lies entirely below 0.95.
-  **[TO CONFIRM] Fallback:** if BCa under-covers and Welch does not, Welch
+  **Fallback:** if BCa under-covers and Welch does not, Welch
   becomes the headline interval and both are still shown. The switch is
   decided by the simulation, before the real comparisons are computed.
 
@@ -229,4 +229,6 @@ they appear.
 
 | Date | Change | Reason |
 |---|---|---|
-| | | |
+| 2026-10-05 | The three items marked [TO CONFIRM] (max-T Dunnett as primary, men's vs women's spend in the exploratory family, the Welch fallback rule) were committed unchanged in `b120b77` and are adopted exactly as written. Markers removed; status line updated. | Clarification only, no change in content. Made before any treatment-arm outcome was read. |
+| 2026-10-05 | Section 5 left the injected effect's size open ("a known rate"). Phase 1a set it to a +50% lift in mean spend, delivered as extra buyers. | Chosen from control-arm data alone, as the size closest to the minimum detectable effect. Made before any treatment-arm outcome was read. |
+| 2026-10-05 | Added validation checks not listed in section 5: Welch false-positive rates and BCa coverage for the seven exploratory hypotheses, Benjamini-Hochberg's error rate under the complete null, and the coverage of each Dunnett interval on its own. | Extra checks only; no analysis changed. Results in `reports/phase1a_method_validation.md`. |

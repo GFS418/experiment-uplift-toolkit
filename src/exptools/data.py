@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import hashlib
 import urllib.request
+from collections.abc import Sequence
 from pathlib import Path
 
 import pandas as pd
@@ -86,12 +87,24 @@ def verify(path: Path = DEFAULT_PATH) -> None:
         raise ValueError(f"unexpected header: {header}")
 
 
-def load_hillstrom(path: Path = DEFAULT_PATH, *, load_outcomes: bool = False) -> pd.DataFrame:
-    """Load the experiment, outcome columns excluded unless explicitly requested."""
+def load_hillstrom(
+    path: Path = DEFAULT_PATH,
+    *,
+    load_outcomes: bool = False,
+    arms: Sequence[str] = ARMS,
+) -> pd.DataFrame:
+    """Load the experiment, outcome columns excluded unless explicitly requested.
+
+    ``arms`` keeps only those arms' rows, dropped before any outcome check runs,
+    so method validation can read the control arm's outcomes and nothing else.
+    """
+    if unknown := set(arms) - set(ARMS):
+        raise ValueError(f"unknown arms: {unknown}")
     verify(path)
     columns = [*PRE_TREATMENT, ASSIGNMENT, *(OUTCOMES if load_outcomes else ())]
     df = pd.read_csv(path, usecols=columns)[columns]
     _validate_pre_treatment(df)
+    df = df[df[ASSIGNMENT].isin(arms)].reset_index(drop=True)
     if load_outcomes:
         _validate_outcomes(df)
     return df

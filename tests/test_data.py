@@ -37,3 +37,16 @@ def test_outcome_validation_on_synthetic_rows():
         data._validate_outcomes(good.assign(spend=[0.0, -1.0]))
     with pytest.raises(ValueError, match="visit is not 0/1"):
         data._validate_outcomes(good.assign(visit=[0, 2]))
+
+
+@needs_raw
+def test_arms_filter_keeps_only_the_requested_arms():
+    # Phase 1a's guarantee: method validation reads the control arm's rows only.
+    df = data.load_hillstrom(arms=[data.CONTROL])
+    assert set(df[data.ASSIGNMENT]) == {data.CONTROL}
+    assert len(df) == 21_306
+
+
+def test_arms_filter_rejects_unknown_arms():
+    with pytest.raises(ValueError, match="unknown arms"):
+        data.load_hillstrom(arms=["Spam E-Mail"])
