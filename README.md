@@ -5,13 +5,17 @@ randomized to a men's e-mail, a women's e-mail, or no e-mail (Hillstrom, 2008).
 The deliverable is a small tested package, `exptools`, plus a decision memo.
 Every method is validated by simulation before it is trusted on real data.
 
-**Status: Phase 1a.** The analysis plan was pre-registered in
+**Status: Phase 1 complete.** The analysis plan was pre-registered in
 [`prereg/analysis_plan.md`](prereg/analysis_plan.md) before any outcome was
-read. The randomization checks pass
+read, and the randomization checks pass
 ([`reports/phase0_randomization_checks.md`](reports/phase0_randomization_checks.md)).
-Every inference method was then validated on 4,000 simulated experiments built
-from real control-arm customers, before any comparison between real arms
+Every inference method was validated on 4,000 simulated experiments built from
+real control-arm customers before any comparison between real arms
 ([`reports/phase1a_method_validation.md`](reports/phase1a_method_validation.md)).
+The pre-registered analysis then found that both e-mails increase spend per
+customer: the men's e-mail by $0.77 (+118%) and the women's by $0.42 (+65%), both
+significant after the Dunnett correction
+([`reports/phase1b_analysis.md`](reports/phase1b_analysis.md)).
 
 ## Setup
 
@@ -20,6 +24,7 @@ uv sync
 uv run python scripts/download_data.py      # fetches the CSV, verifies its SHA-256
 uv run python scripts/check_randomization.py
 uv run python scripts/validate_methods.py   # about 70 s on 8 cores
+uv run python scripts/analyze_experiment.py
 uv run pytest
 ```
 
@@ -41,7 +46,7 @@ uv run pytest
 ## Phases
 
 0. Repo, data, pre-registration, randomization checks (done)
-1. Classical analysis: method validation on the control arm (1a, done), then Dunnett-corrected effects on spend with bootstrap intervals (1b)
+1. Classical analysis: method validation on the control arm (1a), then Dunnett-corrected effects on spend with bootstrap intervals (1b) (done)
 2. Variance reduction: CUPED and regression adjustment
 3. Power, A/A peeking simulation, sequential testing
 4. Heterogeneous effects, uplift models, targeting policy, Criteo scale-up
