@@ -55,6 +55,17 @@ CATEGORIES = {
 }
 
 
+def require_pre_treatment(columns: Sequence[str]) -> None:
+    """Refuse any column that is not measured before the e-mail went out.
+
+    Adjusting for a variable the treatment can change (a visit, say) removes
+    part of the treatment effect along with the noise, so every adjustment
+    and model input passes through this check.
+    """
+    if leaked := [c for c in columns if c not in PRE_TREATMENT]:
+        raise ValueError(f"not pre-treatment, refusing to adjust for: {leaked}")
+
+
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with open(path, "rb") as f:

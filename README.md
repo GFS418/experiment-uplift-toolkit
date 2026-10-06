@@ -5,7 +5,7 @@ randomized to a men's e-mail, a women's e-mail, or no e-mail (Hillstrom, 2008).
 The deliverable is a small tested package, `exptools`, plus a decision memo.
 Every method is validated by simulation before it is trusted on real data.
 
-**Status: Phase 1 complete.** The analysis plan was pre-registered in
+**Status: Phase 2 complete.** The analysis plan was pre-registered in
 [`prereg/analysis_plan.md`](prereg/analysis_plan.md) before any outcome was
 read, and the randomization checks pass
 ([`reports/phase0_randomization_checks.md`](reports/phase0_randomization_checks.md)).
@@ -16,6 +16,12 @@ The pre-registered analysis then found that both e-mails increase spend per
 customer: the men's e-mail by $0.77 (+118%) and the women's by $0.42 (+65%), both
 significant after the Dunnett correction
 ([`reports/phase1b_analysis.md`](reports/phase1b_analysis.md)).
+Adjusting for pre-treatment covariates then removed almost none of the noise in these estimates:
+CUPED removes 0.04% of the spend variance and full regression adjustment at most
+0.56%, because two-week spend is 99% zeros and barely correlated with prior-year
+spend. Adjusting for a post-treatment variable instead would have erased 71% of
+the men's e-mail effect
+([`reports/phase2_variance_reduction.md`](reports/phase2_variance_reduction.md)).
 
 ## Setup
 
@@ -25,6 +31,7 @@ uv run python scripts/download_data.py      # fetches the CSV, verifies its SHA-
 uv run python scripts/check_randomization.py
 uv run python scripts/validate_methods.py   # about 70 s on 8 cores
 uv run python scripts/analyze_experiment.py
+uv run python scripts/adjust_variance.py    # about 2 min on 8 cores
 uv run pytest
 ```
 
@@ -39,6 +46,8 @@ uv run pytest
 | `src/exptools/inference.py` | Welch and BCa comparisons of two arms |
 | `src/exptools/multiplicity.py` | Dunnett (bootstrap max-T and parametric) and Benjamini-Hochberg |
 | `src/exptools/simulate.py` | Plasmode simulations that check methods against a known truth |
+| `src/exptools/adjust.py` | CUPED, Lin's regression adjustment, HC2 standard errors |
+| `src/exptools/simulate_adjustment.py` | Plasmode simulations for the covariate adjustments |
 | `prereg/` | The pre-registered analysis plan and its deviations log |
 | `reports/` | Generated results |
 | `tests/` | Known-answer tests plus simulation checks of each method's error rate |
@@ -47,7 +56,7 @@ uv run pytest
 
 0. Repo, data, pre-registration, randomization checks (done)
 1. Classical analysis: method validation on the control arm (1a), then Dunnett-corrected effects on spend with bootstrap intervals (1b) (done)
-2. Variance reduction: CUPED and regression adjustment
+2. Variance reduction: CUPED and regression adjustment (done)
 3. Power, A/A peeking simulation, sequential testing
 4. Heterogeneous effects, uplift models, targeting policy, Criteo scale-up
 5. Package polish, CI, decision memo
