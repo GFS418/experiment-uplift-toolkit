@@ -5,7 +5,7 @@ randomized to a men's e-mail, a women's e-mail, or no e-mail (Hillstrom, 2008).
 The deliverable is a small tested package, `exptools`, plus a decision memo.
 Every method is validated by simulation before it is trusted on real data.
 
-**Status: Phase 2 complete.** The analysis plan was pre-registered in
+**Status: Phase 3 complete.** The analysis plan was pre-registered in
 [`prereg/analysis_plan.md`](prereg/analysis_plan.md) before any outcome was
 read, and the randomization checks pass
 ([`reports/phase0_randomization_checks.md`](reports/phase0_randomization_checks.md)).
@@ -22,6 +22,11 @@ CUPED removes 0.04% of the spend variance and full regression adjustment at most
 spend. Adjusting for a post-treatment variable instead would have erased 71% of
 the men's e-mail effect
 ([`reports/phase2_variance_reduction.md`](reports/phase2_variance_reduction.md)).
+Simulation then showed that checking results daily and stopping at the first
+significant look turns a 5% false-positive rate into 21%. A group-sequential
+design with O'Brien-Fleming-type alpha spending restores 4.9%, costs about one
+point of power, and stops a men's-sized effect on day 6 on average instead of
+day 14 ([`reports/phase3_power_and_peeking.md`](reports/phase3_power_and_peeking.md)).
 
 ## Setup
 
@@ -32,6 +37,7 @@ uv run python scripts/check_randomization.py
 uv run python scripts/validate_methods.py   # about 70 s on 8 cores
 uv run python scripts/analyze_experiment.py
 uv run python scripts/adjust_variance.py    # about 2 min on 8 cores
+uv run python scripts/sequential_peeking.py # about 30 s
 uv run pytest
 ```
 
@@ -48,7 +54,10 @@ uv run pytest
 | `src/exptools/simulate.py` | Plasmode simulations that check methods against a known truth |
 | `src/exptools/adjust.py` | CUPED, Lin's regression adjustment, HC2 standard errors |
 | `src/exptools/simulate_adjustment.py` | Plasmode simulations for the covariate adjustments |
-| `prereg/` | The pre-registered analysis plan and its deviations log |
+| `src/exptools/power.py` | Minimum detectable effects and sample sizes, including buyer-driven variance |
+| `src/exptools/sequential.py` | Alpha spending, group-sequential boundaries, exact crossing probabilities |
+| `src/exptools/simulate_sequential.py` | Peeking simulations on spend-shaped data |
+| `prereg/` | The pre-registered analysis plan, its deviations log, and the Phase 3 design note |
 | `reports/` | Generated results |
 | `tests/` | Known-answer tests plus simulation checks of each method's error rate |
 
@@ -57,6 +66,6 @@ uv run pytest
 0. Repo, data, pre-registration, randomization checks (done)
 1. Classical analysis: method validation on the control arm (1a), then Dunnett-corrected effects on spend with bootstrap intervals (1b) (done)
 2. Variance reduction: CUPED and regression adjustment (done)
-3. Power, A/A peeking simulation, sequential testing
+3. Power, A/A peeking simulation, sequential testing (done)
 4. Heterogeneous effects, uplift models, targeting policy, Criteo scale-up
 5. Package polish, CI, decision memo

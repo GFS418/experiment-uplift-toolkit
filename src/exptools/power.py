@@ -37,6 +37,21 @@ def mde(
     return _z_total(alpha, power, critical) * float(np.sqrt(var_t / n_t + var_c / n_c))
 
 
+def power(
+    effect: float,
+    var_t: float,
+    var_c: float,
+    n_t: int,
+    n_c: int,
+    alpha: float = 0.05,
+    critical: float | None = None,
+) -> float:
+    """Chance a two-sided test detects a true difference of `effect`."""
+    c = stats.norm.isf(alpha / 2) if critical is None else critical
+    shift = effect / np.sqrt(var_t / n_t + var_c / n_c)
+    return float(stats.norm.sf(c - shift) + stats.norm.cdf(-c - shift))
+
+
 def sample_size(
     effect: float,
     var_t: float,

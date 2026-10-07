@@ -7,6 +7,7 @@ from exptools.power import (
     buyer_driven_sample_size,
     buyer_driven_variance,
     mde,
+    power,
     sample_size,
 )
 
@@ -50,3 +51,8 @@ def test_buyer_driven_sample_size_round_trips():
     mean, second = 1.14, 0.01 * (114**2 + 103**2)
     n = buyer_driven_sample_size(mean, second, 0.25)
     assert buyer_driven_mde(mean, second, n, n) == pytest.approx(0.25, rel=1e-6)
+
+
+def test_power_at_the_mde_is_the_requested_power():
+    effect = mde(2.0, 1.5, 3_000, 2_500)
+    assert power(effect, 2.0, 1.5, 3_000, 2_500) == pytest.approx(0.8, abs=1e-6)
