@@ -18,6 +18,7 @@ import urllib.request
 from collections.abc import Sequence
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 HILLSTROM_URL = (
@@ -48,6 +49,10 @@ PRE_TREATMENT = (
 # Measured in the two weeks after the e-mail.
 OUTCOMES = ("visit", "conversion", "spend")
 FILE_COLUMNS = (*PRE_TREATMENT, ASSIGNMENT, *OUTCOMES)
+
+# Phase 4 hold-out (plan, section 9; Phase 4 design note, section 2).
+SPLIT_SEED = 2026
+HALVES = ("train", "test")
 
 CATEGORIES = {
     "zip_code": ("Urban", "Surburban", "Rural"),  # sic: the source file's spelling
@@ -154,3 +159,29 @@ def _validate_outcomes(df: pd.DataFrame) -> None:
         problems.append("negative spend")
     if problems:
         raise ValueError("outcome checks failed: " + "; ".join(problems))
+
+
+def halves_by_arm(assignment: np.ndarray, rng: np.random.Generator, arms: Sequence[str] = ARMS) -> np.ndarray:
+    """'train' or 'test' per row: shuffle each arm's rows in turn; the first half, rounded down, trains."""
+    half = np.full(len(assignment), "test", dtype=object)
+    for arm in arms:
+        rows = np.flatnonzero(assignment == arm)
+        half[rng.permutation(rows)[: len(rows) // 2]] = "train"
+    return half
+
+
+def split_halves(df: pd.DataFrame, seed: int = SPLIT_SEED) -> np.ndarray:
+    """The Phase 4 hold-out: rows in file order, arms in ARMS order, one generator seeded 2026."""
+    return halves_by_arm(df[ASSIGNMENT].to_numpy(), np.random.default_rng(seed))
+
+
+def load_half(half: str, path: Path = DEFAULT_PATH) -> pd.DataFrame:
+    """One half of the experiment with outcomes. The test half must be asked for by name.
+
+    Rows of the other half are dropped before anything is computed, as the
+    arms filter does for Phase 1a.
+    """
+    if half not in HALVES:
+        raise ValueError(f"half must be one of {HALVES}, got {half!r}")
+    df = load_hillstrom(path, load_outcomes=True)
+    return df[split_halves(df) == half].reset_index(drop=True)

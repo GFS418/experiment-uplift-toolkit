@@ -50,3 +50,20 @@ def test_arms_filter_keeps_only_the_requested_arms():
 def test_arms_filter_rejects_unknown_arms():
     with pytest.raises(ValueError, match="unknown arms"):
         data.load_hillstrom(arms=["Spam E-Mail"])
+
+
+@needs_raw
+def test_split_halves_matches_the_design_note():
+    # Uses assignments only (blind load): 31,999 training and 32,001 test customers.
+    df = data.load_hillstrom()
+    half = data.split_halves(df)
+    assert (half == "train").sum() == 31_999 and (half == "test").sum() == 32_001
+    for arm in data.ARMS:
+        rows = df[data.ASSIGNMENT].to_numpy() == arm
+        assert (half[rows] == "train").sum() == rows.sum() // 2
+    assert (data.split_halves(df) == half).all()  # deterministic
+
+
+def test_load_half_requires_a_named_half():
+    with pytest.raises(ValueError, match="half must be one of"):
+        data.load_half("all")
