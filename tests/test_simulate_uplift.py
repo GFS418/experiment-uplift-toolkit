@@ -65,3 +65,24 @@ def test_simulated_policy_value_is_unbiased_against_its_truth():
     assert not records[0]["m|applicable"]  # a constant second stage leaves nothing to calibrate
     covered = np.mean([r["low"] <= r["truth"] <= r["high"] for r in records])
     assert covered > 0.88
+
+
+def test_retuned_simulation_records_both_learners_tests():
+    from exptools.simulate_uplift import simulate_retuned_once
+
+    rng = np.random.default_rng(4)
+    pool = _pool(rng)
+    config = Config(dict.fromkeys(("c", "m", "w"), CONSTANT), {"m": CONSTANT, "w": CONSTANT})
+    scenario = Scenario("heterogeneous", {"m": 1.18, "w": 0.65}, heterogeneous=True)
+    record = simulate_retuned_once(
+        pool,
+        {"c": 3_000, "m": 3_000, "w": 3_000},
+        "c",
+        scenario,
+        config,
+        np.random.SeedSequence(5),
+        candidates=(CONSTANT,),
+    )
+    # Only a constant was offered, so the DR test cannot apply; the T-learner's always can.
+    assert record["m|dr_constant"] and not record["m|dr_applicable"]
+    assert set(record) >= {"m|t_p", "m|t_slope", "w|t_p", "w|dr_p"}

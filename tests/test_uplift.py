@@ -15,6 +15,7 @@ from exptools.uplift import (
     cv_select,
     fold_ids,
     greedy_policy,
+    moderator_tests,
     policy_bootstrap,
     policy_value,
     qini_area,
@@ -151,3 +152,31 @@ def test_policy_bootstrap_matches_the_analytic_spread_and_is_paired():
     # Different arms' customers are resampled independently, so these are uncorrelated.
     assert abs(np.corrcoef(boot["t1"], boot["t2"])[0, 1]) < 0.06
     pd.testing.assert_index_equal(pd.Index(sorted(boot)), pd.Index(sorted(ARMS)))
+
+
+def test_budget_policy_breaks_ties_at_random_when_asked():
+    flat = {"t1": np.zeros(1_000), "t2": np.full(1_000, -1.0)}
+    chosen = budget_policy(flat, "c", 0.1, np.random.default_rng(0)) == "t1"
+    assert chosen.sum() == 100
+    assert np.flatnonzero(chosen).max() > 500  # not simply the first 100 rows
+    assert budget_policy(flat, "c", 0.1)[:100].tolist() == ["t1"] * 100
+
+
+def test_moderator_test_holds_its_size_and_finds_a_planted_interaction():
+    rng = np.random.default_rng(10)
+    rejections = []
+    for _ in range(300):
+        n = 3_000
+        arm = rng.choice(np.array(ARMS, dtype=object), n)
+        z = rng.integers(0, 2, n)
+        y = 0.3 * (arm == "t1") + rng.normal(size=n)
+        rejections.append(moderator_tests(y, arm, "c", ("t1", "t2"), z)["t1"].p_value < 0.05)
+    assert abs(np.mean(rejections) - 0.05) < 3 * np.sqrt(0.05 * 0.95 / 300)
+    n = 20_000
+    arm = rng.choice(np.array(ARMS, dtype=object), n)
+    category = rng.integers(0, 3, n)
+    z = np.column_stack([category == 1, category == 2])
+    y = 0.5 * (arm == "t1") * (category == 2) + rng.normal(size=n)
+    result = moderator_tests(y, arm, "c", ("t1", "t2"), z)
+    assert result["t1"].df == 2 and result["t1"].p_value < 1e-6
+    assert result["t2"].p_value > 0.001

@@ -38,6 +38,7 @@ uv run python scripts/validate_methods.py   # about 70 s on 8 cores
 uv run python scripts/analyze_experiment.py
 uv run python scripts/adjust_variance.py    # about 2 min on 8 cores
 uv run python scripts/sequential_peeking.py # about 30 s
+uv run python scripts/uplift_phase4a.py     # tuning, freezing, validation: about 55 min
 uv run pytest
 ```
 
@@ -57,7 +58,9 @@ uv run pytest
 | `src/exptools/power.py` | Minimum detectable effects and sample sizes, including buyer-driven variance |
 | `src/exptools/sequential.py` | Alpha spending, group-sequential boundaries, exact crossing probabilities |
 | `src/exptools/simulate_sequential.py` | Peeking simulations on spend-shaped data |
-| `prereg/` | The pre-registered analysis plan, its deviations log, and the Phase 3 design note |
+| `src/exptools/uplift.py` | T-, DR-learner and causal forest; calibration test, uplift curves, policy values, moderator tests |
+| `src/exptools/simulate_uplift.py` | Plasmode validation of the uplift pipeline against a known truth |
+| `prereg/` | The pre-registered analysis plan, its deviations log, and the Phase 3 and 4 design notes |
 | `reports/` | Generated results |
 | `tests/` | Known-answer tests plus simulation checks of each method's error rate |
 

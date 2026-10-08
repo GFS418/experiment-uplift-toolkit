@@ -1,0 +1,338 @@
+{
+  "spend": {
+    "fingerprints": {
+      "DR-learner|Mens E-Mail": "3158778548a583e5",
+      "DR-learner|Womens E-Mail": "df9f26a664b89ee8",
+      "T-learner|Mens E-Mail": "9362fa0f688ec9a2",
+      "T-learner|Womens E-Mail": "1885a96a392bcf62",
+      "causal forest|Mens E-Mail": "d8110c404aba026b",
+      "causal forest|Womens E-Mail": "4aa51311ec34578f"
+    },
+    "outcome_cv_mse": {
+      "Mens E-Mail": {
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 375.97038120211363,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 380.6014580521181,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 373.2226942936468,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 374.1626621960916,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 383.6496097419916,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 395.05045261634524,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 375.5197219352625,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 378.70389944030194,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 375.8513315422604,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 380.8899834715235,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 373.29696796125484,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 374.1434722087602,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 383.87535160883124,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 395.4883769635301,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 375.5146074286104,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 378.57558069477295
+      },
+      "No E-Mail": {
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 134.50820359325613,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 136.67243441114292,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 133.83156888552352,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 134.39072560421255,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 136.87223901836967,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 142.13620462012352,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 134.7633152630097,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 136.33216753449574,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 134.5446856483535,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 136.53137137254348,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 133.81236827650375,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 134.38568603935042,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 136.72718621840355,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 142.41760591082155,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 134.8289353644071,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 136.1896670341762
+      },
+      "Womens E-Mail": {
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 208.43820031845817,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 211.29923430633346,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 206.99775290965292,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 207.96056559675282,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 211.37760322423776,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 216.6771870977813,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 208.07200921849577,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 210.4291321683494,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 208.3806687129379,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 211.11710303629258,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 206.9687572175945,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 207.96369264266104,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 211.42733535338402,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 216.7095629027142,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 208.112074634938,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 210.72088314817003
+      }
+    },
+    "outcome_params": {
+      "Mens E-Mail": {
+        "l2_regularization": 0.0,
+        "learning_rate": 0.03,
+        "max_leaf_nodes": 7,
+        "min_samples_leaf": 200
+      },
+      "No E-Mail": {
+        "l2_regularization": 1.0,
+        "learning_rate": 0.03,
+        "max_leaf_nodes": 7,
+        "min_samples_leaf": 200
+      },
+      "Womens E-Mail": {
+        "l2_regularization": 1.0,
+        "learning_rate": 0.03,
+        "max_leaf_nodes": 7,
+        "min_samples_leaf": 200
+      }
+    },
+    "stage2_cv_loss": {
+      "Mens E-Mail": {
+        "constant": 1519.9459777269296,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 1530.6074990025804,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 1539.8532159852177,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 1523.4226949127767,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 1525.239892267466,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 1547.3242370597561,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 1572.1549644525194,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 1528.0705986775615,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 1534.9029795797169,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 1530.2928423676676,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 1539.1307928276385,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 1523.2794980405708,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 1525.2128771321795,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 1547.94461147401,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 1572.1901415041323,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 1527.9151849828695,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 1535.0827267704599
+      },
+      "Womens E-Mail": {
+        "constant": 1019.1073266359997,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 1026.5216515400148,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 1031.5788120419484,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 1021.4915996608537,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 1022.5659147863391,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 1037.2452235210212,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 1049.28888497901,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 1024.9906212130065,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 1030.0270050808501,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 1026.522153713865,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 1030.978153317679,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 1021.4632427979313,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 1022.6396963272026,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 1037.3608594737796,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 1049.878754890342,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 1025.1388293035377,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 1029.449809164872
+      }
+    },
+    "stage2_params": {
+      "Mens E-Mail": "constant",
+      "Womens E-Mail": "constant"
+    },
+    "training_predictions": {
+      "DR-learner|Mens E-Mail": {
+        "mean": 0.8486623662503193,
+        "p5": 0.8486623662503191,
+        "p95": 0.8486623662503191,
+        "sd": 2.220446049250313e-16
+      },
+      "DR-learner|Womens E-Mail": {
+        "mean": 0.3766698374720611,
+        "p5": 0.3766698374720611,
+        "p95": 0.3766698374720611,
+        "sd": 0.0
+      },
+      "T-learner|Mens E-Mail": {
+        "mean": 0.8476612813648705,
+        "p5": -1.035346002412992,
+        "p95": 3.3515305982432193,
+        "sd": 1.435756655345659
+      },
+      "T-learner|Womens E-Mail": {
+        "mean": 0.36706695550622487,
+        "p5": -1.633978013575707,
+        "p95": 2.3341368402805753,
+        "sd": 1.2279063809116588
+      },
+      "causal forest|Mens E-Mail": {
+        "mean": 0.8631721501110371,
+        "p5": -0.225533985220002,
+        "p95": 2.5318446200554785,
+        "sd": 0.8910021737200083
+      },
+      "causal forest|Womens E-Mail": {
+        "mean": 0.44013717994821683,
+        "p5": -0.8891474926516667,
+        "p95": 1.94445700540642,
+        "sd": 0.8714086893375508
+      }
+    }
+  },
+  "visit": {
+    "fingerprints": {
+      "DR-learner|Mens E-Mail": "7b457b83589e7e02",
+      "DR-learner|Womens E-Mail": "8319a39a5d595cf9",
+      "T-learner|Mens E-Mail": "1056592860e6e22a",
+      "T-learner|Womens E-Mail": "5af735ff2f59f789",
+      "causal forest|Mens E-Mail": "462d15c1f67361d5",
+      "causal forest|Womens E-Mail": "1a4844cf30dc163a"
+    },
+    "outcome_cv_mse": {
+      "Mens E-Mail": {
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.14626803492277604,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.14718244190116672,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.14477635351837964,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.14481854272505112,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.14900152487426932,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.1523654147123513,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.1454924549031604,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.14587706058276276,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.146388834428133,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.14700310132571498,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.14479361551290715,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.1448052549782242,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.14888920724913546,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.1522436868596909,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.14551342448291324,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.14582972975441236
+      },
+      "No E-Mail": {
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.09336603034524502,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.09413882798587712,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.09237187498517876,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.09244160474538328,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.09551297432344157,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.09754791530259763,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.09305982526707597,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.09329861952815463,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.09338903248884388,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.09415340868216775,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.09236324357231201,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.09243267904214411,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.09543878533645987,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.09752995521165826,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.09307263154062759,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.09332907687859278
+      },
+      "Womens E-Mail": {
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.12887432189822748,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.12932151810862327,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.1273999052621948,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.1273315622867683,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.13146980440392533,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.1338402051445687,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.12837165947544904,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.1288089208175519,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.12877342849914203,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.12927524415268601,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.12737787189744942,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.12731464901003026,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.13125614980512426,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.13395571637723552,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.12827160202090884,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.1285647482537713
+      }
+    },
+    "outcome_params": {
+      "Mens E-Mail": {
+        "l2_regularization": 0.0,
+        "learning_rate": 0.03,
+        "max_leaf_nodes": 7,
+        "min_samples_leaf": 200
+      },
+      "No E-Mail": {
+        "l2_regularization": 1.0,
+        "learning_rate": 0.03,
+        "max_leaf_nodes": 7,
+        "min_samples_leaf": 200
+      },
+      "Womens E-Mail": {
+        "l2_regularization": 1.0,
+        "learning_rate": 0.03,
+        "max_leaf_nodes": 7,
+        "min_samples_leaf": 50
+      }
+    },
+    "stage2_cv_loss": {
+      "Mens E-Mail": {
+        "constant": 0.7109533053621304,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.7169679157641993,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.7168089769928624,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.7126091812363835,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.7126682648029125,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.7255431318106343,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.729498088346793,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.7152794186451273,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.7157804534098368,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.7169330766859616,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.716779245570177,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.712632911648223,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.7126356833120121,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.7257412466256732,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.7292188057971511,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.7152420272374037,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.7153638823543846
+      },
+      "Womens E-Mail": {
+        "constant": 0.6581092954487412,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.6617682690229275,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.6617647397677575,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.6586279109441328,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.6585936848712276,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.6692309048499204,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.6721325885538724,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.6604876599175208,
+        "{\"l2_regularization\": 0.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.6604142344468882,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.6617093091907662,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.6617572127992261,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.6586969247400281,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.03, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.6585943213688704,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 200}": 0.6691490115171931,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 31, \"min_samples_leaf\": 50}": 0.6717885642277912,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 200}": 0.6604575825875965,
+        "{\"l2_regularization\": 1.0, \"learning_rate\": 0.1, \"max_leaf_nodes\": 7, \"min_samples_leaf\": 50}": 0.660677580093665
+      }
+    },
+    "stage2_params": {
+      "Mens E-Mail": "constant",
+      "Womens E-Mail": "constant"
+    },
+    "training_predictions": {
+      "DR-learner|Mens E-Mail": {
+        "mean": 0.07372900982985818,
+        "p5": 0.07372900982985815,
+        "p95": 0.07372900982985815,
+        "sd": 2.7755575615628914e-17
+      },
+      "DR-learner|Womens E-Mail": {
+        "mean": 0.0491877373631213,
+        "p5": 0.04918773736312129,
+        "p95": 0.04918773736312129,
+        "sd": 6.938893903907228e-18
+      },
+      "T-learner|Mens E-Mail": {
+        "mean": 0.07377309527657742,
+        "p5": 0.020804618834970708,
+        "p95": 0.1391811065628419,
+        "sd": 0.036389865700168875
+      },
+      "T-learner|Womens E-Mail": {
+        "mean": 0.049140354400685586,
+        "p5": -0.014850007970619195,
+        "p95": 0.1217426763579608,
+        "sd": 0.04411420570040608
+      },
+      "causal forest|Mens E-Mail": {
+        "mean": 0.07320985299182528,
+        "p5": 0.03151440120946601,
+        "p95": 0.11101968134401267,
+        "sd": 0.024039561974196856
+      },
+      "causal forest|Womens E-Mail": {
+        "mean": 0.04946333990075215,
+        "p5": 0.0008786277800298566,
+        "p95": 0.10965138709098766,
+        "sd": 0.03412257866678798
+      }
+    }
+  }
+}

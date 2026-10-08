@@ -245,13 +245,21 @@ def greedy_policy(effects: Mapping[str, np.ndarray], control: str) -> np.ndarray
     return np.array(names, dtype=object)[np.argmax(stacked, axis=1)]
 
 
-def budget_policy(effects: Mapping[str, np.ndarray], control: str, share: float) -> np.ndarray:
-    """The top `share` of customers by best predicted effect get their best e-mail; the rest none."""
+def budget_policy(
+    effects: Mapping[str, np.ndarray], control: str, share: float, rng: np.random.Generator | None = None
+) -> np.ndarray:
+    """The top `share` of customers by best predicted effect get their best e-mail; the rest none.
+
+    Ties are broken in a random order from `rng` when given (otherwise by row
+    order), so a model that predicts the same effect for everyone selects a
+    random set rather than whoever comes first in the file.
+    """
     names = list(effects)
     stacked = np.column_stack(list(effects.values()))
     best, best_effect = np.array(names, dtype=object)[stacked.argmax(axis=1)], stacked.max(axis=1)
+    tiebreak = rng.permutation(len(best)) if rng is not None else np.arange(len(best))
+    top = np.lexsort((tiebreak, -best_effect))[: round(share * len(best))]
     policy = np.full(len(best), control, dtype=object)
-    top = np.argsort(-best_effect, kind="stable")[: round(share * len(best))]
     policy[top] = best[top]
     return policy
 
@@ -287,4 +295,35 @@ def policy_bootstrap(
         draws = compressed.resample(n_resamples, rng)
         for name in names:
             out[name] += draws @ compressed.column(name) / compressed.n
+    return out
+
+
+@dataclass(frozen=True)
+class ModeratorTest:
+    chi2: float
+    df: int
+    p_value: float
+
+
+def moderator_tests(
+    y: np.ndarray, arm: np.ndarray, control: str, treatments: Sequence[str], moderator: np.ndarray
+) -> dict[str, ModeratorTest]:
+    """Does each treatment's effect vary with the moderator? One Wald test per treatment.
+
+    OLS of y on arm dummies, the moderator's columns, and every arm-by-moderator
+    interaction, with HC2 standard errors; the test is that a treatment's
+    interaction coefficients are all zero.
+    """
+    z = moderator.reshape(len(y), -1).astype(float)
+    dummies = np.column_stack([(arm == t).astype(float) for t in treatments])
+    interactions = [dummies[:, [k]] * z for k in range(len(treatments))]
+    design = np.column_stack([np.ones(len(y)), dummies, z, *interactions])
+    beta, cov = ols_hc2(design, y.astype(float))
+    p = z.shape[1]
+    out = {}
+    for k, t in enumerate(treatments):
+        idx = slice(1 + len(treatments) + p * (k + 1), 1 + len(treatments) + p * (k + 2))
+        b, v = beta[idx], cov[idx, idx]
+        chi2 = float(b @ np.linalg.solve(v, b))
+        out[t] = ModeratorTest(chi2, p, float(stats.chi2.sf(chi2, p)))
     return out

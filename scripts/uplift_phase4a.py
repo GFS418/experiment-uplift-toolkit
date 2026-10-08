@@ -4,7 +4,8 @@ Reads the training half only; the test half stays sealed until this phase is
 committed (Phase 4 design note, sections 2 to 4 and 8). Writes
 reports/phase4a_frozen_config.json, reports/phase4a_simulations.parquet and
 reports/phase4a_tuning_and_validation.md. `--from-cache` rebuilds the report
-from the JSON and the parquet without refitting or re-simulating.
+from the JSON and the parquets without refitting or re-simulating; `--extra` runs only the
+added check (plan, section 12, 2026-10-08) on the frozen configuration.
 """
 
 import hashlib
@@ -16,7 +17,7 @@ import pandas as pd
 
 from exptools.adjust import covariate_matrix
 from exptools.data import ARMS, ASSIGNMENT, CONTROL, REPO_ROOT, load_half, require_pre_treatment
-from exptools.simulate_uplift import Config, Pool, Scenario, run
+from exptools.simulate_uplift import Config, Pool, Scenario, run, simulate_retuned_once
 from exptools.uplift import CONSTANT, FEATURES, GRID, CausalForest, DRLearner, TLearner, cv_select, fold_ids
 
 MENS, WOMENS = "Mens E-Mail", "Womens E-Mail"
@@ -27,15 +28,48 @@ SIZES = {CONTROL: 21_306, MENS: 21_307, WOMENS: 21_387}  # note, section 4: the 
 LIFTS = {MENS: 1.18, WOMENS: 0.65}  # note, section 4: the observed lifts
 SCENARIOS = {"constant effects": (False, 202641), "heterogeneous effects": (True, 202642)}
 N_SIMS = 200
+# Added after the first run, before the test half was opened (plan, section 12, 2026-10-08).
+EXTRA_SCENARIOS = {"constant effects": (False, 202645), "heterogeneous effects": (True, 202646)}
 SHORT = {MENS: "men's e-mail", WOMENS: "women's e-mail", CONTROL: "no e-mail"}
 CONFIG = REPO_ROOT / "reports" / "phase4a_frozen_config.json"
 CACHE = REPO_ROOT / "reports" / "phase4a_simulations.parquet"
+EXTRA_CACHE = REPO_ROOT / "reports" / "phase4a_extra_simulations.parquet"
 REPORT = REPO_ROOT / "reports" / "phase4a_tuning_and_validation.md"
 
 require_pre_treatment(FEATURES)  # the leakage guard, before any model is fit
 
-# Written after reading the first run's output; empty until then.
-INTERPRETATION: list[str] = []
+# Written after reading the first run's output (it was empty for that run). The
+# tuning, models and simulations are seeded and deterministic.
+INTERPRETATION = [
+    "## 3. Reading the results",
+    "",
+    "1. **Cross-validation found no heterogeneity worth modeling.** For both outcomes and both e-mails,",
+    "   predicting the same effect for everyone beat the best of 16 tree models on the DR loss, by 0.07%",
+    "   to 0.23%. The frozen DR-learner therefore predicts one number per e-mail: +$0.85 (men's) and",
+    "   +$0.38 (women's) on spend, +7.4 and +4.9 points on visits, close to Phase 1b's full-sample",
+    "   effects.",
+    "2. **The outcome models are as cautious as the grid allows.** Every arm chose the slower learning",
+    "   rate and 7-leaf trees, and all but one chose at least 200 customers per leaf: consistent with",
+    "   Phase 2, where the features barely predicted spend.",
+    "3. **What this fixes for Phase 4b, as pre-registered.** The primary calibration test has nothing",
+    "   to test (the predictions are constant), the DR-learner's policy is \"everyone gets the men's",
+    '   e-mail", and its 10,000-e-mail answer is a random 10,000. The T-learner and the causal forest',
+    "   do vary their predictions (in-sample SD $1.44 and $0.89 for the men's e-mail on spend); 4b's",
+    "   held-out calibration tests will show whether that variation is signal or noise.",
+    "4. **The policy value estimator is honest.** Against the exact truth its bias is -$0.013 +/-",
+    "   $0.025 and +$0.002 +/- $0.024 per customer, and its 95% intervals cover the truth 93.0% and",
+    "   92.5% of the time: within Monte Carlo error of 95% for 200 experiments (about +/-3 points),",
+    "   though possibly slightly low, as percentile intervals for skewed spend tend to be.",
+    "5. **Even the choice between the two e-mails is uncertain on half the data.** In 10 of 200",
+    "   experiments per scenario, the training half ranked the women's e-mail (+65%) above the men's",
+    "   (+118%). That costs $0.33 per customer when it happens and $0.017 on average. The two scenarios",
+    "   show the same figure because their average lifts are equal by construction and a constant",
+    "   model only ever sends one e-mail.",
+    "6. **What this validation cannot show.** With the second stage frozen at a constant, the",
+    "   calibration test never applies, so these simulations cannot say whether the procedure could",
+    "   have detected heterogeneity of the planted size.",
+    "",
+]
 
 
 def fingerprint(values: np.ndarray) -> str:
@@ -100,22 +134,47 @@ def freeze(train: pd.DataFrame, frozen: dict) -> None:
         cfg["fingerprints"], cfg["training_predictions"] = prints, spreads
 
 
-def validate(train: pd.DataFrame, frozen: dict) -> pd.DataFrame:
-    """Plasmode validation from the training half's control customers (note, section 4)."""
+def control_pool(train: pd.DataFrame) -> Pool:
+    """The training half's control customers: the population of every simulated experiment."""
     control = train[train[ASSIGNMENT] == CONTROL].reset_index(drop=True)
     X = covariate_matrix(control, FEATURES)
     if X.shape[1] != features(train)[0].shape[1]:
         raise RuntimeError("control customers do not cover every category level")
-    pool = Pool(
+    return Pool(
         X=X,
         spend=control["spend"].to_numpy(dtype=float),
         history=control["history"].to_numpy(dtype=float),
         category={MENS: control["mens"].to_numpy(), WOMENS: control["womens"].to_numpy()},
     )
+
+
+def validate(train: pd.DataFrame, frozen: dict) -> pd.DataFrame:
+    """Plasmode validation from the training half's control customers (note, section 4)."""
+    pool = control_pool(train)
     config = Config(frozen["spend"]["outcome_params"], frozen["spend"]["stage2_params"])
     frames = [
         run(pool, SIZES, CONTROL, Scenario(name, LIFTS, heterogeneous), config, N_SIMS, seed)
         for name, (heterogeneous, seed) in SCENARIOS.items()
+    ]
+    return pd.concat(frames, ignore_index=True)
+
+
+def extra_check(train: pd.DataFrame, frozen: dict) -> pd.DataFrame:
+    """The added check: the DR second stage re-selected inside every simulated experiment."""
+    pool = control_pool(train)
+    config = Config(frozen["spend"]["outcome_params"], frozen["spend"]["stage2_params"])
+    frames = [
+        run(
+            pool,
+            SIZES,
+            CONTROL,
+            Scenario(name, LIFTS, heterogeneous),
+            config,
+            N_SIMS,
+            seed,
+            simulate=simulate_retuned_once,
+        )
+        for name, (heterogeneous, seed) in EXTRA_SCENARIOS.items()
     ]
     return pd.concat(frames, ignore_index=True)
 
@@ -176,7 +235,11 @@ def tuning_section(frozen: dict, train: pd.DataFrame) -> list[str]:
             "| Learner | Effect of | Mean | SD across customers | 5th to 95th percentile | Fingerprint |",
             "|---|---|---:|---:|---|---|",
         ]
-        unit = (lambda v: f"${v:.3f}") if outcome == "spend" else (lambda v: f"{100 * v:.2f} pp")
+        unit = (
+            (lambda v: f"{'-' if v < 0 else ''}${abs(v):.3f}")
+            if outcome == "spend"
+            else (lambda v: f"{100 * v:.2f} pp")
+        )
         for key, s in cfg["training_predictions"].items():
             name, t = key.split("|")
             lines.append(
@@ -222,9 +285,48 @@ def validation_section(sims: pd.DataFrame) -> list[str]:
     return lines
 
 
-def main(from_cache: bool) -> None:
+def extra_section(extra: pd.DataFrame) -> list[str]:
+    lines = [
+        "## 2b. Added check: the second stage re-selected in every simulated experiment",
+        "",
+        "Added after this phase's first run, at the user's request, before the test half was opened",
+        "(plan, section 12). In each of 200 experiments per scenario (seeds 202645 and 202646), the",
+        "DR-learner's second stage is chosen by the same cross-validation as on the real data (constant",
+        "vs the 16 tree settings), and the T-learner's predictions get the same calibration test. A test",
+        "that cannot apply (constant predictions) counts as no rejection. One-sided, alpha 0.05.",
+        "",
+        "| Scenario | DR picks a tree model: men's / women's | DR rejects: men's / women's | DR either, Holm "
+        "| T-learner rejects: men's / women's | T-learner either, Holm "
+        "| T-learner mean slope: men's / women's |",
+        "|---|---:|---:|---:|---:|---:|---:|",
+    ]
+    for name in EXTRA_SCENARIOS:
+        s = extra[extra["scenario"] == name]
+        tree = [1 - s[f"{t}|dr_constant"].astype(float).mean() for t in TREATMENTS]
+        cells = []
+        for learner in ("dr", "t"):
+            p = s[[f"{t}|{learner}_p" for t in TREATMENTS]].astype(float).fillna(1.0).to_numpy()
+            cells.append((p < 0.05).mean(axis=0))
+            cells.append((p.min(axis=1) <= 0.025).mean())
+        slopes = [s[f"{t}|t_slope"].astype(float).mean() for t in TREATMENTS]
+        lines.append(
+            f"| {name} | {tree[0]:.0%} / {tree[1]:.0%} | {cells[0][0]:.3f} / {cells[0][1]:.3f} "
+            f"| {cells[1]:.3f} "
+            f"| {cells[2][0]:.3f} / {cells[2][1]:.3f} | {cells[3]:.3f} | {slopes[0]:.2f} / {slopes[1]:.2f} |"
+        )
+    margin = 1.96 * np.sqrt(0.05 * 0.95 / N_SIMS)
+    lines += [
+        "",
+        f"Under constant effects every rejection is a false alarm; with {N_SIMS} experiments, a correctly",
+        f"sized test lands within about +/-{margin:.3f} of 0.05 (single tests) or of 0.05 at most (Holm).",
+        "",
+    ]
+    return lines
+
+
+def main(from_cache: bool, extra_only: bool) -> None:
     train = load_half("train")  # the test half stays sealed
-    if from_cache:
+    if from_cache or extra_only:
         frozen = json.loads(CONFIG.read_text())
         sims = pd.read_parquet(CACHE)
     else:
@@ -233,6 +335,11 @@ def main(from_cache: bool) -> None:
         CONFIG.write_text(json.dumps(frozen, indent=2, sort_keys=True))
         sims = validate(train, frozen)
         sims.to_parquet(CACHE)
+    if from_cache:
+        extra = pd.read_parquet(EXTRA_CACHE) if EXTRA_CACHE.exists() else None
+    else:
+        extra = extra_check(train, frozen)
+        extra.to_parquet(EXTRA_CACHE)
     lines = [
         "# Phase 4a: tuning, freezing, and validating the uplift models",
         "",
@@ -243,6 +350,7 @@ def main(from_cache: bool) -> None:
         "",
         *tuning_section(frozen, train),
         *validation_section(sims),
+        *(extra_section(extra) if extra is not None else []),
         *INTERPRETATION,
     ]
     REPORT.write_text("\n".join(lines))
@@ -250,4 +358,4 @@ def main(from_cache: bool) -> None:
 
 
 if __name__ == "__main__":
-    main(from_cache="--from-cache" in sys.argv)
+    main(from_cache="--from-cache" in sys.argv, extra_only="--extra" in sys.argv)
