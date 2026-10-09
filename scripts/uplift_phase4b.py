@@ -57,8 +57,51 @@ REPORT = REPO_ROOT / "reports" / "phase4b_test_evaluation.md"
 
 require_pre_treatment(FEATURES)
 
-# Written after reading the first run's output; empty until then.
-INTERPRETATION: list[str] = []
+# Written after reading the first run's output (it was empty for that run). The report is
+# rebuilt exactly from reports/phase4b_results.json with --from-cache; the test half is not reread.
+INTERPRETATION = [
+    "## 6. Reading the results",
+    "",
+    "1. **The primary test had nothing to test, as Phase 4a predicted.** The frozen DR-learner",
+    '   predicts one effect per e-mail, so its calibration test cannot apply, its policy is "send',
+    "   everyone the men's e-mail\", and its 10,000-e-mail answer is a random 10,000.",
+    "2. **No learner found heterogeneity in spend.** The T-learner's and causal forest's spend",
+    "   predictions vary a lot (SD $0.87 to $1.44 per customer), but on held-out data their",
+    "   calibration slopes are 0.15 to 0.52 and none is significant (lowest one-sided p 0.058): most",
+    "   of that variation is noise, as Phase 4a's power check said to expect.",
+    "3. **Visits tell a clearer story, for the women's e-mail.** Both models' predictions of whom the",
+    "   women's e-mail moves to visit hold up on held-out data (calibration slopes 0.56 and 0.70,",
+    "   one-sided p below 0.001; uplift areas +0.70 and +0.68 points, intervals excluding zero). The",
+    "   pre-specified moderator test points the same way (purchase category: chi-square 97 on 2",
+    "   df). The women's e-mail lifts visits by 7.4 points among women's-only buyers but by only 1.1",
+    "   points among men's-only buyers. The men's e-mail lifts both groups about equally (6.9 and 7.1",
+    "   points) and customers who bought both by 13.4. All exploratory, but three independent",
+    "   methods agree.",
+    "4. **That heterogeneity does not change the decision.** Among women's-only buyers the two",
+    "   e-mails tie (7.1 vs 7.4 visit points; $0.62 vs $0.63 of spend), and everywhere else the men's",
+    '   e-mail does better. So "send everyone the men\'s e-mail" is already close to the best',
+    "   policy, and the test half says so directly: the causal forest's targeted policy beats it by",
+    "   $75 per 1,000 customers [-$221, +$384], and the T-learner's loses $71 [-$368, +$230].",
+    "   Heterogeneity can be statistically real without being worth acting on.",
+    "5. **The 10,000-e-mail question: no model beats a random 10,000.** Sending the men's e-mail to a",
+    "   random 10,000 customers is worth about $6,900 of two-week revenue [$3,100, $10,700].",
+    "   Targeting by the causal forest adds $119 [-$11,391, +$12,480]; targeting by the T-learner",
+    "   loses $4,176 [-$13,704, +$5,674]. That is despite both models picking a plausible-looking",
+    "   group: prior-year spend of $422 to $474 against $242 overall, and more new and multichannel",
+    "   customers. No targeting rule validated here beats picking 10,000 at random.",
+    "6. **Leads, not findings.** The causal forest's spend uplift area for the women's e-mail",
+    "   excludes zero ($0.136 [$0.014, $0.256]). The newbie-by-women's-e-mail spend interaction",
+    "   has an uncorrected p of 0.018 (0.14 after Benjamini-Hochberg). Both come from many",
+    "   exploratory comparisons. The first fits the visit pattern above, so it is the first",
+    "   thing a follow-up experiment should test.",
+    "7. **What it would take to see spend heterogeneity.** Phase 4a's power check detected a planted",
+    "   fourfold difference at most 30% of the time. A follow-up needs far more customers, a longer",
+    "   outcome window (more buyers), or an outcome less dominated by rare purchases, as visits",
+    "   show. The moderator tables suggest where to look: the women's e-mail among women's-only",
+    "   buyers, and the men's e-mail among customers who bought both categories (+$1.83 of spend",
+    "   [$0.49, $3.16], +13.4 visit points).",
+    "",
+]
 
 
 def fingerprint(values: np.ndarray) -> str:
@@ -268,6 +311,11 @@ def moderator_section_data() -> dict:
     return out
 
 
+def pfmt(p: float, decimals: int = 4) -> str:
+    """Plain decimals, or scientific notation when the value would round to zero."""
+    return f"{p:.1e}" if p < 10**-decimals else f"{p:.{decimals}f}"
+
+
 def money(x: float, decimals: int = 3) -> str:
     return f"{'-' if x < 0 else ''}${abs(x):,.{decimals}f}"
 
@@ -301,7 +349,7 @@ def render(results: dict) -> list[str]:
     for key, r in het.items():
         outcome, learner, t = key.split("|")
         slope = f"{r['slope']:.2f} ({r['slope_se']:.2f})" if r["applicable"] else "n/a (constant)"
-        p = f"{r['p_value']:.3f}" if r["applicable"] else "n/a"
+        p = pfmt(r["p_value"], 3) if r["applicable"] else "n/a"
         lines.append(
             f"| {outcome} | {learner} | {SHORT[t]} | {unit(outcome, r['ate'])} | {slope} | {p} "
             f"| {unit(outcome, r['prediction_sd'])} |"
@@ -409,8 +457,8 @@ def render(results: dict) -> list[str]:
         ]
         for r in block["tests"]:
             lines.append(
-                f"| {r['moderator']} | {SHORT[r['e-mail']]} | {r['chi2']:.2f} ({r['df']}) | {r['p']:.4f} "
-                f"| {r['bh_p']:.4f} | {'yes' if r['lead'] else 'no'} |"
+                f"| {r['moderator']} | {SHORT[r['e-mail']]} | {r['chi2']:.2f} ({r['df']}) | {pfmt(r['p'])} "
+                f"| {pfmt(r['bh_p'])} | {'yes' if r['lead'] else 'no'} |"
             )
         lines += [
             "",

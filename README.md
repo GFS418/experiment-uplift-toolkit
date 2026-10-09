@@ -5,7 +5,7 @@ randomized to a men's e-mail, a women's e-mail, or no e-mail (Hillstrom, 2008).
 The deliverable is a small tested package, `exptools`, plus a decision memo.
 Every method is validated by simulation before it is trusted on real data.
 
-**Status: Phase 4a complete; Phase 4b next.** The analysis plan was pre-registered in
+**Status: Phase 4 complete on Hillstrom; the Criteo scale-up is next.** The analysis plan was pre-registered in
 [`prereg/analysis_plan.md`](prereg/analysis_plan.md) before any outcome was
 read, and the randomization checks pass
 ([`reports/phase0_randomization_checks.md`](reports/phase0_randomization_checks.md)).
@@ -32,6 +32,13 @@ sealed: cross-validation found no heterogeneity worth modeling, and simulation
 shows the procedure would have detected even a planted fourfold difference in
 responsiveness only 3% of the time, so this is absence of evidence, not evidence
 of absence ([`reports/phase4a_tuning_and_validation.md`](reports/phase4a_tuning_and_validation.md)).
+On the held-out half, no model found spend heterogeneity worth acting on: the best
+targeted policy beat sending everyone the men's e-mail by $75 per 1,000 customers
+[-$221, +$384], and no model's choice of 10,000 customers beat a random 10,000.
+Visits did vary in a way the models confirmed (the women's e-mail barely moves
+men's-only buyers), but the men's e-mail ties or wins for every group, so the
+decision does not change
+([`reports/phase4b_test_evaluation.md`](reports/phase4b_test_evaluation.md)).
 
 ## Setup
 
@@ -44,6 +51,7 @@ uv run python scripts/analyze_experiment.py
 uv run python scripts/adjust_variance.py    # about 2 min on 8 cores
 uv run python scripts/sequential_peeking.py # about 30 s
 uv run python scripts/uplift_phase4a.py     # tuning, freezing, validation: about 55 min
+uv run python scripts/uplift_phase4b.py     # the single test-half evaluation
 uv run pytest
 ```
 
@@ -75,5 +83,5 @@ uv run pytest
 1. Classical analysis: method validation on the control arm (1a), then Dunnett-corrected effects on spend with bootstrap intervals (1b) (done)
 2. Variance reduction: CUPED and regression adjustment (done)
 3. Power, A/A peeking simulation, sequential testing (done)
-4. Heterogeneous effects, uplift models, targeting policy, Criteo scale-up
+4. Heterogeneous effects, uplift models, targeting policy (done on Hillstrom), Criteo scale-up
 5. Package polish, CI, decision memo
