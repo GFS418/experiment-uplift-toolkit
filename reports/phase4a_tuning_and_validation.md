@@ -81,6 +81,27 @@ Average share of test customers the fitted policy sends to each arm:
 | constant effects | 0% | 95% | 5% |
 | heterogeneous effects | 0% | 95% | 5% |
 
+## 2b. Added check: the second stage re-selected in every simulated experiment
+
+Added after this phase's first run, at the user's request, before the test half was opened
+(plan, section 12). In each of 200 experiments per scenario (seeds 202645 and 202646), the
+DR-learner's second stage is chosen by the same cross-validation as on the real data (constant
+vs the 16 tree settings), and the T-learner's predictions get the same calibration test. A test
+that cannot apply (constant predictions) counts as no rejection. One-sided, alpha 0.05.
+
+| Scenario | DR picks a tree model: men's / women's | DR rejects: men's / women's | DR either, Holm | T-learner rejects: men's / women's | T-learner either, Holm | T-learner mean slope: men's / women's |
+|---|---:|---:|---:|---:|---:|---:|
+| constant effects | 19% / 22% | 0.000 / 0.005 | 0.000 | 0.070 / 0.050 | 0.035 | 0.09 / 0.02 |
+| heterogeneous effects | 19% / 26% | 0.025 / 0.020 | 0.030 | 0.300 / 0.065 | 0.220 | 0.29 / 0.12 |
+
+Size of the planted heterogeneity (expected effect per customer of the population):
+
+- men's e-mail: mean $0.738, SD $1.001, 10th to 90th percentile $0.052 to $1.953
+- women's e-mail: mean $0.406, SD $0.553, 10th to 90th percentile $0.028 to $1.079
+
+Under constant effects every rejection is a false alarm; with 200 experiments, a correctly
+sized test lands within about +/-0.030 of 0.05 (single tests) or of 0.05 at most (Holm).
+
 ## 3. Reading the results
 
 1. **Cross-validation found no heterogeneity worth modeling.** For both outcomes and both e-mails,
@@ -105,6 +126,19 @@ Average share of test customers the fitted policy sends to each arm:
    (+118%). That costs $0.33 per customer when it happens and $0.017 on average. The two scenarios
    show the same figure because their average lifts are equal by construction and a constant
    model only ever sends one e-mail.
-6. **What this validation cannot show.** With the second stage frozen at a constant, the
-   calibration test never applies, so these simulations cannot say whether the procedure could
-   have detected heterogeneity of the planted size.
+6. **The added check: the procedure could not have seen heterogeneity this large.** In the
+   heterogeneous scenario, past buyers of a category are four times as responsive to its
+   e-mail: the men's e-mail's planted effect averages $0.74 per customer with an SD of $1.00
+   (10th to 90th percentile: $0.05 to $1.95). Re-running the full DR procedure inside each
+   simulated experiment detected that only 3.0% of the time (Holm), no better than its
+   false-alarm rate, and cross-validation chose a tree model in 19% to 26% of experiments,
+   about as often as when effects were constant.
+7. **The T-learner's calibration test is valid, with some power.** Under constant effects it
+   fires 3.5% of the time (Holm; 7.0% and 5.0% per e-mail, within Monte Carlo error of 5%).
+   With the planted heterogeneity it fires 22% of the time (30% for the men's e-mail alone),
+   and its mean slope of 0.29 says most of the spread in its predictions is noise.
+8. **How to read Phase 4b.** A null result on the test half will mean "not detectable at this
+   sample size", not "everyone responds the same". Two-week spend is 99% zeros, so each
+   customer's response is far too noisy to learn from 32,000 training customers. The
+   T-learner's and causal forest's tests are the only ones with any chance, and on this
+   evidence even they would miss heterogeneity of the planted size most of the time.

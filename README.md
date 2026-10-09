@@ -5,7 +5,7 @@ randomized to a men's e-mail, a women's e-mail, or no e-mail (Hillstrom, 2008).
 The deliverable is a small tested package, `exptools`, plus a decision memo.
 Every method is validated by simulation before it is trusted on real data.
 
-**Status: Phase 3 complete.** The analysis plan was pre-registered in
+**Status: Phase 4a complete; Phase 4b next.** The analysis plan was pre-registered in
 [`prereg/analysis_plan.md`](prereg/analysis_plan.md) before any outcome was
 read, and the randomization checks pass
 ([`reports/phase0_randomization_checks.md`](reports/phase0_randomization_checks.md)).
@@ -27,6 +27,11 @@ significant look turns a 5% false-positive rate into 21%. A group-sequential
 design with O'Brien-Fleming-type alpha spending restores 4.9%, costs about one
 point of power, and stops a men's-sized effect on day 6 on average instead of
 day 14 ([`reports/phase3_power_and_peeking.md`](reports/phase3_power_and_peeking.md)).
+For heterogeneous effects, models were tuned on a training half with the test half
+sealed: cross-validation found no heterogeneity worth modeling, and simulation
+shows the procedure would have detected even a planted fourfold difference in
+responsiveness only 3% of the time, so this is absence of evidence, not evidence
+of absence ([`reports/phase4a_tuning_and_validation.md`](reports/phase4a_tuning_and_validation.md)).
 
 ## Setup
 

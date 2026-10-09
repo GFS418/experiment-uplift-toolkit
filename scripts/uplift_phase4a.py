@@ -17,7 +17,14 @@ import pandas as pd
 
 from exptools.adjust import covariate_matrix
 from exptools.data import ARMS, ASSIGNMENT, CONTROL, REPO_ROOT, load_half, require_pre_treatment
-from exptools.simulate_uplift import Config, Pool, Scenario, run, simulate_retuned_once
+from exptools.simulate_uplift import (
+    Config,
+    Pool,
+    Scenario,
+    conversion_probability,
+    run,
+    simulate_retuned_once,
+)
 from exptools.uplift import CONSTANT, FEATURES, GRID, CausalForest, DRLearner, TLearner, cv_select, fold_ids
 
 MENS, WOMENS = "Mens E-Mail", "Womens E-Mail"
@@ -65,9 +72,22 @@ INTERPRETATION = [
     "   (+118%). That costs $0.33 per customer when it happens and $0.017 on average. The two scenarios",
     "   show the same figure because their average lifts are equal by construction and a constant",
     "   model only ever sends one e-mail.",
-    "6. **What this validation cannot show.** With the second stage frozen at a constant, the",
-    "   calibration test never applies, so these simulations cannot say whether the procedure could",
-    "   have detected heterogeneity of the planted size.",
+    "6. **The added check: the procedure could not have seen heterogeneity this large.** In the",
+    "   heterogeneous scenario, past buyers of a category are four times as responsive to its",
+    "   e-mail: the men's e-mail's planted effect averages $0.74 per customer with an SD of $1.00",
+    "   (10th to 90th percentile: $0.05 to $1.95). Re-running the full DR procedure inside each",
+    "   simulated experiment detected that only 3.0% of the time (Holm), no better than its",
+    "   false-alarm rate, and cross-validation chose a tree model in 19% to 26% of experiments,",
+    "   about as often as when effects were constant.",
+    "7. **The T-learner's calibration test is valid, with some power.** Under constant effects it",
+    "   fires 3.5% of the time (Holm; 7.0% and 5.0% per e-mail, within Monte Carlo error of 5%).",
+    "   With the planted heterogeneity it fires 22% of the time (30% for the men's e-mail alone),",
+    "   and its mean slope of 0.29 says most of the spread in its predictions is noise.",
+    '8. **How to read Phase 4b.** A null result on the test half will mean "not detectable at this',
+    '   sample size", not "everyone responds the same". Two-week spend is 99% zeros, so each',
+    "   customer's response is far too noisy to learn from 32,000 training customers. The",
+    "   T-learner's and causal forest's tests are the only ones with any chance, and on this",
+    "   evidence even they would miss heterogeneity of the planted size most of the time.",
     "",
 ]
 
@@ -285,7 +305,7 @@ def validation_section(sims: pd.DataFrame) -> list[str]:
     return lines
 
 
-def extra_section(extra: pd.DataFrame) -> list[str]:
+def extra_section(extra: pd.DataFrame, pool: Pool) -> list[str]:
     lines = [
         "## 2b. Added check: the second stage re-selected in every simulated experiment",
         "",
@@ -313,6 +333,14 @@ def extra_section(extra: pd.DataFrame) -> list[str]:
             f"| {name} | {tree[0]:.0%} / {tree[1]:.0%} | {cells[0][0]:.3f} / {cells[0][1]:.3f} "
             f"| {cells[1]:.3f} "
             f"| {cells[2][0]:.3f} / {cells[2][1]:.3f} | {cells[3]:.3f} | {slopes[0]:.2f} / {slopes[1]:.2f} |"
+        )
+    mean_buyer_spend = pool.spend[pool.spend > 0].mean()
+    lines += ["", "Size of the planted heterogeneity (expected effect per customer of the population):", ""]
+    for t in TREATMENTS:
+        tau = conversion_probability(pool, t, LIFTS[t], True) * mean_buyer_spend
+        lines.append(
+            f"- {SHORT[t]}: mean ${tau.mean():.3f}, SD ${tau.std():.3f}, 10th to 90th percentile "
+            f"${np.percentile(tau, 10):.3f} to ${np.percentile(tau, 90):.3f}"
         )
     margin = 1.96 * np.sqrt(0.05 * 0.95 / N_SIMS)
     lines += [
@@ -350,7 +378,7 @@ def main(from_cache: bool, extra_only: bool) -> None:
         "",
         *tuning_section(frozen, train),
         *validation_section(sims),
-        *(extra_section(extra) if extra is not None else []),
+        *(extra_section(extra, control_pool(train)) if extra is not None else []),
         *INTERPRETATION,
     ]
     REPORT.write_text("\n".join(lines))
