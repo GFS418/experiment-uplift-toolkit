@@ -1,0 +1,26 @@
+name: ci
+
+# Lint and test on every push and pull request. CI never downloads the data:
+# tests that need the Hillstrom file skip themselves, and the Criteo tests use
+# synthetic data. Actions are pinned to exact release tags, checked to exist
+# with `gh api repos/OWNER/REPO/git/ref/tags/TAG` (a floating major tag such as
+# setup-uv@v10 does not exist and would break the run).
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.3.0
+      - name: Install the locked environment (Python from .python-version)
+        run: uv sync --locked
+      - name: Lint
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+      - name: Test
+        run: uv run pytest -q

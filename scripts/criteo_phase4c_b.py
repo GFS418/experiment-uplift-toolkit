@@ -7,7 +7,6 @@ Writes reports/phase4c_b_results.json and reports/phase4c_b_test_evaluation.md;
 `--from-cache` rebuilds the report from the JSON.
 """
 
-import hashlib
 import json
 import sys
 import time
@@ -17,6 +16,7 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 
 from exptools import criteo
 from exptools.criteo import CONTROL, FEATURES, OUTCOMES, TREATED
+from exptools.freeze import fingerprint
 from exptools.uplift import CausalForest, DRLearner, TLearner, calibration_test
 
 SIZES = ("32000", "320000", "3200000", "full")
@@ -71,10 +71,6 @@ START = time.perf_counter()
 
 def log(message: str) -> None:
     print(f"[{time.perf_counter() - START:7.0f}s] {message}", flush=True)
-
-
-def fingerprint(values: np.ndarray) -> str:
-    return hashlib.sha256(np.round(values, 10).tobytes()).hexdigest()[:16]
 
 
 def scores(y, treated, m_t, m_c, e):

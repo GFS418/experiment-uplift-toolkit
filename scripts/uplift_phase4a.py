@@ -8,7 +8,6 @@ from the JSON and the parquets without refitting or re-simulating; `--extra` run
 added check (plan, section 12, 2026-10-08) on the frozen configuration.
 """
 
-import hashlib
 import json
 import sys
 
@@ -17,6 +16,7 @@ import pandas as pd
 
 from exptools.adjust import covariate_matrix
 from exptools.data import ARMS, ASSIGNMENT, CONTROL, REPO_ROOT, load_half, require_pre_treatment
+from exptools.freeze import fingerprint
 from exptools.simulate_uplift import (
     Config,
     Pool,
@@ -90,10 +90,6 @@ INTERPRETATION = [
     "   evidence even they would miss heterogeneity of the planted size most of the time.",
     "",
 ]
-
-
-def fingerprint(values: np.ndarray) -> str:
-    return hashlib.sha256(np.round(values, 10).tobytes()).hexdigest()[:16]
 
 
 def features(df: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:

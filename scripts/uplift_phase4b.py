@@ -23,6 +23,7 @@ from exptools.data import (
     load_hillstrom,
     require_pre_treatment,
 )
+from exptools.freeze import fingerprint
 from exptools.multiplicity import benjamini_hochberg
 from exptools.uplift import (
     FEATURES,
@@ -102,12 +103,6 @@ INTERPRETATION = [
     "   [$0.49, $3.16], +13.4 visit points).",
     "",
 ]
-
-
-def fingerprint(values: np.ndarray) -> str:
-    import hashlib
-
-    return hashlib.sha256(np.round(values, 10).tobytes()).hexdigest()[:16]
 
 
 def refit_and_verify(train: pd.DataFrame, frozen: dict) -> dict:

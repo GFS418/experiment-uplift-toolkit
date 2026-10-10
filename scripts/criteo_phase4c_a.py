@@ -7,7 +7,6 @@ reports/phase4c_frozen_config.json, reports/phase4c_aa_control.parquet and
 reports/phase4c_a_checks_tuning.md; `--from-cache` rebuilds the report from those files.
 """
 
-import hashlib
 import json
 import sys
 import time
@@ -20,6 +19,7 @@ from exptools import criteo
 from exptools.adjust import difference_in_means
 from exptools.criteo import CONTROL, FEATURES, OUTCOMES, TREATED
 from exptools.data import REPO_ROOT, halves_by_arm
+from exptools.freeze import fingerprint
 from exptools.uplift import (
     CONSTANT,
     GRID,
@@ -90,10 +90,6 @@ START = time.perf_counter()
 
 def log(message: str) -> None:
     print(f"[{time.perf_counter() - START:7.0f}s] {message}", flush=True)
-
-
-def fingerprint(values: np.ndarray) -> str:
-    return hashlib.sha256(np.round(values, 10).tobytes()).hexdigest()[:16]
 
 
 def checks(df: pd.DataFrame, train: np.ndarray) -> dict:

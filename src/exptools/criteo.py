@@ -19,10 +19,7 @@ import pandas as pd
 
 from exptools.data import REPO_ROOT, halves_by_arm
 
-URL = (
-    "https://huggingface.co/datasets/criteo/criteo-uplift/resolve/main/"
-    "criteo-research-uplift-v2.1.csv.gz"
-)
+URL = "https://huggingface.co/datasets/criteo/criteo-uplift/resolve/main/criteo-research-uplift-v2.1.csv.gz"
 SHA256 = "2716e1bf0fd157a93b5bf86924d9088419dfbac2022c6cd90030220634f616dc"  # published by the host
 N_BYTES = 311_422_618
 N_ROWS = 13_979_592  # v2.1; the leaky first release had 25,309,483
